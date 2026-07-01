@@ -4,7 +4,7 @@ import { env } from "./config/env.js";
 import "./models/index.js";
 
 async function bootstrap() {
-  await sequelize.sync();
+  await sequelize.sync({ alter: true });
   app.listen(env.port, () => {
     console.log(`FINANCES Server listo en http://localhost:${env.port}/api`);
   });

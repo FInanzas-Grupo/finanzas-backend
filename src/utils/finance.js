@@ -75,6 +75,33 @@ export function irr(cashflows) {
   return mid;
 }
 
+export function irrConPasos(cashflows) {
+  let low = -0.9999;
+  let high = 10;
+  const pasos = [];
+
+  const npvLow = npv(low, cashflows);
+  const npvHigh = npv(high, cashflows);
+
+  if (Math.sign(npvLow) === Math.sign(npvHigh)) {
+    return { tir: null, pasos: [] };
+  }
+
+  for (let i = 1; i <= 200; i++) {
+    const mid = (low + high) / 2;
+    const value = npv(mid, cashflows);
+    pasos.push({ i, low: round2(low), high: round2(high), mid: round2(mid), npv: round2(value) });
+    if (Math.abs(value) < 1e-7) break;
+    if (Math.sign(value) === Math.sign(npv(low, cashflows))) {
+      low = mid;
+    } else {
+      high = mid;
+    }
+  }
+
+  return { tir: pasos[pasos.length - 1]?.mid ?? null, pasos };
+}
+
 export function addMonths30Days(dateString, months) {
   const date = new Date(dateString || new Date().toISOString().slice(0, 10));
   date.setDate(date.getDate() + months * 30);
@@ -197,7 +224,7 @@ export function calcularSimulacion(input) {
     saldo = saldo - (cuotaOrdinaria - interes);
   }
 
-  const tirMensual = irr(flujosDeudor);
+  const { tir: tirMensual, pasos: tirPasos } = irrConPasos(flujosDeudor);
   const tirAnual = tirMensual === null ? null : Math.pow(1 + tirMensual, 12) - 1;
   const tcea = tirAnual;
   const van = npv(tem, flujosDeudor);
@@ -229,6 +256,7 @@ export function calcularSimulacion(input) {
       gastosMensuales: round2(gastosMensuales)
     },
     cronograma,
+    tirPasos,
     indicadores: {
       cuotaOrdinaria: round2(cuotaOrdinaria),
       van: round2(van),

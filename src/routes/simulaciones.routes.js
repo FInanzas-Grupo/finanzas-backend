@@ -43,6 +43,8 @@ simulacionesRouter.post("/", async (req, res) => {
       moneda: req.body.moneda || vehiculo.moneda
     });
 
+    const { flujosDeudor, tirPasos } = resultado;
+
     const sim = await Simulacion.create({
       clienteId: cliente.id,
       vehiculoId: vehiculo.id,
@@ -63,7 +65,9 @@ simulacionesRouter.post("/", async (req, res) => {
       seguroMensual: resultado.parametros.seguroMensual,
       comisionMensual: resultado.parametros.comisionMensual,
       gastosMensuales: resultado.parametros.gastosMensuales,
-      resumen: resultado.indicadores
+      resumen: resultado.indicadores,
+      flujosDeudor,
+      tirPasos
     });
 
     const rows = resultado.cronograma.map(row => ({ ...row, simulacionId: sim.id }));

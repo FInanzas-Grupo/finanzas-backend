@@ -55,7 +55,9 @@ export const Simulacion = sequelize.define("Simulacion", {
   seguroMensual: { type: DataTypes.FLOAT, defaultValue: 0 },
   comisionMensual: { type: DataTypes.FLOAT, defaultValue: 0 },
   gastosMensuales: { type: DataTypes.FLOAT, defaultValue: 0 },
-  resumen: { type: DataTypes.JSON, allowNull: false }
+  resumen: { type: DataTypes.JSON, allowNull: false },
+  flujosDeudor: { type: DataTypes.JSON, allowNull: true },
+  tirPasos: { type: DataTypes.JSON, allowNull: true }
 });
 
 export const CronogramaPago = sequelize.define("CronogramaPago", {
